@@ -379,6 +379,11 @@ public class WirelessSettings extends SettingsPreferenceFragment implements Inde
         if (mWifiCallSettingsEnabled) {
             updateEnhancedWFCSettings();
         }
+        
+        if (!SystemProperties.getBoolean("persist.setting.net.airplane", true)) {
+            removePreference(KEY_MOBILE_NETWORK_SETTINGS);
+            getPreferenceScreen().removePreference(mAirplaneModePreference);
+        }
     }
 
     @Override

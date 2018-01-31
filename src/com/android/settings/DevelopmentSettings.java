@@ -130,6 +130,7 @@ public class DevelopmentSettings extends SettingsPreferenceFragment
     private static final String SIMULATE_COLOR_SPACE = "simulate_color_space";
     private static final String USB_AUDIO_KEY = "usb_audio";
     private static final String SHOW_CPU_USAGE_KEY = "show_cpu_usage";
+    private static final String DEVELOPEMENT_SETTINGS_KEY="development_settings";
     private static final String FORCE_HARDWARE_UI_KEY = "force_hw_ui";
     private static final String FORCE_MSAA_KEY = "force_msaa";
     private static final String TRACK_FRAME_TIME_KEY = "track_frame_time";
@@ -234,6 +235,7 @@ public class DevelopmentSettings extends SettingsPreferenceFragment
     private SwitchPreference mShowHwLayersUpdates;
     private SwitchPreference mDebugLayout;
     private SwitchPreference mForceRtlLayout;
+    private PreferenceScreen mDevelopementSettings;
     private ListPreference mDebugHwOverdraw;
     private ListPreference mLogdSize;
     private ListPreference mUsbConfiguration;
@@ -361,6 +363,7 @@ public class DevelopmentSettings extends SettingsPreferenceFragment
         mShowCpuUsage = findAndInitSwitchPref(SHOW_CPU_USAGE_KEY);
         mForceHardwareUi = findAndInitSwitchPref(FORCE_HARDWARE_UI_KEY);
         mForceMsaa = findAndInitSwitchPref(FORCE_MSAA_KEY);
+        mDevelopementSettings = (PreferenceScreen)findPreference(DEVELOPEMENT_SETTINGS_KEY);
         mTrackFrameTime = addListPreference(TRACK_FRAME_TIME_KEY);
         mShowNonRectClip = addListPreference(SHOW_NON_RECTANGULAR_CLIP_KEY);
         mShowHwScreenUpdates = findAndInitSwitchPref(SHOW_HW_SCREEN_UPDATES_KEY);
@@ -530,6 +533,9 @@ public class DevelopmentSettings extends SettingsPreferenceFragment
         if (mColorModePreference != null) {
             mColorModePreference.startListening();
             mColorModePreference.updateCurrentAndSupported();
+        }
+        if (!SystemProperties.getBoolean("persist.setting.dev.stayawake", true)) {
+            mDevelopementSettings.removePreference(mKeepScreenOn);
         }
     }
 

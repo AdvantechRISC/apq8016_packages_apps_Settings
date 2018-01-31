@@ -26,6 +26,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.provider.Settings;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -106,6 +107,12 @@ public class WifiEnabler implements SwitchBar.OnSwitchChangeListener  {
             mListeningToOnSwitchChange = true;
         }
         mSwitchBar.show();
+        boolean prop = SystemProperties.getBoolean("persist.setting.wifi", true);
+        if (prop) {
+            mSwitchBar.show();
+        } else {
+            mSwitchBar.hide();
+        }
     }
 
     public void teardownSwitchBar() {

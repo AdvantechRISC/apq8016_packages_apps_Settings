@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.Instrumentation;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -40,6 +41,7 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.preference.Preference;
@@ -518,6 +520,8 @@ public class SettingsActivity extends Activity
         }
         mSearchView.setQuery(query, true /* submit */);
 
+        MenuItem mCustomMenuItem = menu.findItem(R.id.function_button);
+        mCustomMenuItem.setVisible(SystemProperties.getBoolean("persist.setting.func_button", true));
         return true;
     }
 
@@ -706,6 +710,25 @@ public class SettingsActivity extends Activity
         }
 
         mHomeActivitiesCount = getHomeActivitiesCount();
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if(menuItem.getItemId() == R.id.function_button){
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        int key = SystemProperties.getInt("persist.setting.func_keycode", 0);
+                        Instrumentation inst = new Instrumentation();
+                        inst.sendKeyDownUpSync(key);
+                    } catch (Exception e) {
+                        Log.e("Exception when sendKeyDownUpSync", e.toString());
+                    }
+                }
+            }.start();
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     private int getHomeActivitiesCount() {
@@ -1328,6 +1351,21 @@ public class SettingsActivity extends Activity
                     }
                 } else if (id == R.id.qtifeedback_settings){
                     if (!mSMQ.isShowSmqSettings()) {
+                        removeTile = true;
+                    }
+                } else if (id == R.id.application_settings) {
+                    String dontshow= SystemProperties.get("persist.cust.apppage.hide");
+                    if ("true".equals(dontshow)) {
+                        removeTile = true;
+                    }
+                } else if (id == R.id.location_settings) {
+                    String dontshow= SystemProperties.get("persist.cust.btn.location.hide");
+                    if ("true".equals(dontshow)) {
+                        removeTile = true;
+                    }    
+                } else if (id == R.id.privacy_settings) {
+                    String dontshow= SystemProperties.get("persist.cust.factoryreset.hide");
+                    if ("true".equals(dontshow)) {
                         removeTile = true;
                     }
                 }

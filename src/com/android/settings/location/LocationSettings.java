@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.SettingInjectorService;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.preference.Preference;
@@ -215,7 +216,8 @@ public class LocationSettings extends LocationSettingsBase
             lockdownOnLocationAccess = true;
         }
         addLocationServices(activity, root, lockdownOnLocationAccess);
-
+        boolean prop = SystemProperties.getBoolean("persist.setting.loc", true);
+        mSwitch.setVisibility(prop? android.view.View.VISIBLE : android.view.View.GONE);
         refreshLocationMode();
         return root;
     }
